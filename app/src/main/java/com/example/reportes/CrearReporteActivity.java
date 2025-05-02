@@ -36,7 +36,6 @@ public class CrearReporteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_reporte);
 
-        // Vincular vistas
         etNombre = findViewById(R.id.etNombre);
         etDescripcion = findViewById(R.id.etDescripcion);
         spinnerColonia = findViewById(R.id.spinnerColonia);
@@ -45,7 +44,6 @@ public class CrearReporteActivity extends AppCompatActivity {
         Button btnAdjuntarImagen = findViewById(R.id.btnAdjuntarImagen);
         Button btnEnviarReporte = findViewById(R.id.btnEnviarReporte);
 
-        // Configurar spinners
         ArrayAdapter<CharSequence> adapterColonias = ArrayAdapter.createFromResource(
                 this, R.array.colonias, android.R.layout.simple_spinner_item);
         adapterColonias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -56,27 +54,21 @@ public class CrearReporteActivity extends AppCompatActivity {
         adapterTipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipoReporte.setAdapter(adapterTipo);
 
-        // Botón para adjuntar imagen
         btnAdjuntarImagen.setOnClickListener(view -> {
-            // Elegir imagen desde galería
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             intent.setType("image/*");
             startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
         });
 
-        // Botón para enviar reporte
         btnEnviarReporte.setOnClickListener(view -> {
             if (validarCampos()) {
-                // Generar ID único para el reporte
                 String reporteId = generarIdUnico();
 
-                // Mostrar el ID generado (puedes asociarlo con el reporte o almacenarlo)
                 Toast.makeText(this, "Reporte enviado con ID: " + reporteId, Toast.LENGTH_SHORT).show();
 
-                // Aquí puedes enviar el reporte a tu backend o base de datos
-                // En este punto, el reporteId puede ser guardado junto con los otros datos (nombre, descripción, etc.)
+                // Aquí  enviar el reporte a tu backend o base de datos
 
-                finish(); // Cierra la actividad
+                finish();
             }
         });
     }
@@ -112,9 +104,8 @@ public class CrearReporteActivity extends AppCompatActivity {
         return valido;
     }
 
-    // Método para generar un ID único para el reporte
     private String generarIdUnico() {
-        // Usamos UUID para generar un ID único
+
         return UUID.randomUUID().toString();
     }
 }
