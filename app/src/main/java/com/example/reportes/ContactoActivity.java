@@ -46,19 +46,19 @@ public class ContactoActivity extends AppCompatActivity {
 
     private void hacerLlamada() {
         Intent intent = new Intent(Intent.ACTION_DIAL);
-        intent.setData(Uri.parse("tel:1234567890")); // Cambia el número a uno real
+        intent.setData(Uri.parse("tel:1234567890")); // contacoto telefonico
         startActivity(intent);
     }
 
     private void enviarCorreo() {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:soporte@ciudadanoapp.com")); // Cambia el correo a uno real
+        intent.setData(Uri.parse("mailto:soporte@ciudadanoapp.com")); // contacto correo
         intent.putExtra(Intent.EXTRA_SUBJECT, "Consulta Ciudadana");
         startActivity(intent);
     }
 
     private void mostrarUbicacion() {
-        Uri location = Uri.parse("geo:19.4326,-99.1332"); // Ubicación: Ciudad de México ejemplo
+        Uri location = Uri.parse("geo:19.4326,-99.1332"); // contacto uvicacion
         Intent intent = new Intent(Intent.ACTION_VIEW, location);
         startActivity(intent);
     }
