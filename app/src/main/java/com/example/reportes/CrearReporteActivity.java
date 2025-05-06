@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +25,6 @@ public class CrearReporteActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAMERA = 2;
 
     private EditText etNombre, etDescripcion;
-    private Spinner spinnerColonia, spinnerTipoReporte;
     private ImageView imageView;
     private Uri imageUri = null;
 
@@ -38,8 +36,8 @@ public class CrearReporteActivity extends AppCompatActivity {
 
         etNombre = findViewById(R.id.etNombre);
         etDescripcion = findViewById(R.id.etDescripcion);
-        spinnerColonia = findViewById(R.id.spinnerColonia);
-        spinnerTipoReporte = findViewById(R.id.spinnerTipoReporte);
+        Spinner spinnerColonia = findViewById(R.id.spinnerColonia);
+        Spinner spinnerTipoReporte = findViewById(R.id.spinnerTipoReporte);
         imageView = findViewById(R.id.imgFoto);
         Button btnAdjuntarImagen = findViewById(R.id.btnAdjuntarImagen);
         Button btnEnviarReporte = findViewById(R.id.btnEnviarReporte);
