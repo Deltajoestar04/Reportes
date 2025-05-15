@@ -5,42 +5,52 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" android:required="false"/>
-    <uses-permission android:name="android.permission.CALL_PHONE" android:required="false"/>
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        android:required="false" />
+    <uses-permission
+        android:name="android.permission.CALL_PHONE"
+        android:required="false" />
 
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Reportes"
-        tools:targetApi="31"
-        android:requestLegacyExternalStorage="true">
-
+        tools:targetApi="31">
+        <activity
+            android:name=".dialogo_id_reporte"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".CrearReporteActivity"
             android:exported="true" />
-
         <activity
             android:name=".ConsultarReporteActivity"
             android:exported="true" />
-
         <activity
             android:name=".ContactoActivity"
-            android:exported="true" />
-
+            android:launchMode="standard"
+            android:windowSoftInputMode="adjustPan"
+            android:parentActivityName=".MainActivity"            />
     </application>
+
 </manifest>
