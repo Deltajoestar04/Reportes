@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "799697797658",
+    "project_id": "reportes-d97ff",
+    "storage_bucket": "reportes-d97ff.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:799697797658:android:e15c23122df46147d687a3",
+        "android_client_info": {
+          "package_name": "com.example.reportes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCf2XwPutei1bQ8EZPZp9v92rGQFxxraVM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
