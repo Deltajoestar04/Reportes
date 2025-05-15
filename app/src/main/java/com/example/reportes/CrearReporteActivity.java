@@ -37,14 +37,8 @@ public class CrearReporteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_reporte);
-
-        // Inicializar vistas
         initViews();
-
-        // Configurar spinners
         setupSpinners();
-
-        // Configurar botones
         setupButtons();
     }
 
@@ -144,15 +138,15 @@ public class CrearReporteActivity extends AppCompatActivity {
         String imagenBase64 = (imageUri != null) ? convertirImagenABase64(imageUri) : "";
 
         Reporte reporte = new Reporte(
-                "", // El ID se generará automáticamente
-                etNombre.getText().toString(),
+                etCelular.getText().toString(),
+                spinnerColonia.getSelectedItem().toString(),
+                etCorreo.getText().toString(),
                 etDescripcion.getText().toString(),
                 etDireccion.getText().toString(),
-                etCelular.getText().toString(),
-                etCorreo.getText().toString(),
-                spinnerColonia.getSelectedItem().toString(),
-                spinnerTipoReporte.getSelectedItem().toString(),
-                imagenBase64
+                 "",//  ID
+                imagenBase64,
+                etNombre.getText().toString(),
+                spinnerTipoReporte.getSelectedItem().toString()
         );
 
         FirebaseDatabaseManager dbManager = new FirebaseDatabaseManager();
@@ -171,24 +165,18 @@ public class CrearReporteActivity extends AppCompatActivity {
         });
     }
     private void mostrarDialogoIdReporte(String reporteId) {
-        // Inflar el layout del diálogo personalizado
         View dialogView = LayoutInflater.from(this).inflate(R.layout.activity_dialogo_id_reporte, null);
-
-        // Configurar los elementos del diálogo
         TextView tvIdReporte = dialogView.findViewById(R.id.tvIdReporte);
         Button btnCopiar = dialogView.findViewById(R.id.btnCopiar);
         Button btnAceptar = dialogView.findViewById(R.id.btnAceptar);
 
         tvIdReporte.setText(reporteId);
-
-        // Crear el diálogo
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView);
         builder.setCancelable(false);
 
         final AlertDialog dialog = builder.create();
 
-        // Configurar botón copiar
         btnCopiar.setOnClickListener(v -> {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("ID Reporte", reporteId);
@@ -196,7 +184,7 @@ public class CrearReporteActivity extends AppCompatActivity {
             Toast.makeText(CrearReporteActivity.this, "ID copiado al portapapeles", Toast.LENGTH_SHORT).show();
         });
 
-        // Configurar botón aceptar
+        // botón aceptar
         btnAceptar.setOnClickListener(v -> {
             dialog.dismiss();
             finish();

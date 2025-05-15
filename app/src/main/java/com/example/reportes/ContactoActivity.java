@@ -46,7 +46,7 @@ public class ContactoActivity extends AppCompatActivity {
 
     private void hacerLlamada() {
         Intent intent = new Intent(Intent.ACTION_DIAL);
-        intent.setData(Uri.parse("tel:1234567890")); // contacoto telefonico
+        intent.setData(Uri.parse("tel:1234567890"));// contacoto telefonico
         startActivity(intent);
     }
 

@@ -4,11 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +32,7 @@ public class ConsultarReporteActivity extends AppCompatActivity {
     private EditText etReporteId;
     private TextView tvDatosReporte;
     private ProgressBar progressBar;
+    private ImageView imgReporte;
     private DatabaseReference databaseReference;
 
     @Override
@@ -35,35 +40,19 @@ public class ConsultarReporteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consultar_reporte);
 
-        // Configuración inicial
-        setupFirebase();
-        initViews();
-        setupButtons();
-
-        // Verificar si se pasó un ID desde otra actividad
-        checkIntentExtras();
-    }
-
-    private void setupFirebase() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        databaseReference = database.getReference("reportes");
-    }
-
-    private void initViews() {
         etReporteId = findViewById(R.id.etReporteId);
         tvDatosReporte = findViewById(R.id.tvDatosReporte);
         progressBar = findViewById(R.id.progressBar);
-    }
-
-    private void setupButtons() {
+        imgReporte = findViewById(R.id.imgReporte);
         Button btnBuscar = findViewById(R.id.btnBuscarReporte);
         Button btnPegar = findViewById(R.id.btnPegar);
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        databaseReference = database.getReference("reportes");
+
         btnBuscar.setOnClickListener(v -> buscarReporte());
         btnPegar.setOnClickListener(v -> pegarDesdePortapapeles());
-    }
 
-    private void checkIntentExtras() {
         String idReporte = getIntent().getStringExtra("REPORTE_ID");
         if (idReporte != null && !idReporte.isEmpty()) {
             etReporteId.setText(idReporte);
@@ -75,20 +64,20 @@ public class ConsultarReporteActivity extends AppCompatActivity {
         String reporteId = etReporteId.getText().toString().trim();
 
         if (reporteId.isEmpty()) {
-            showToast("Por favor ingrese un ID de reporte");
+            mostrarToast("Por favor ingrese un ID de reporte");
             return;
         }
 
-        showLoading(true);
+        mostrarCarga(true);
         Log.d(TAG, "Buscando reporte ID: " + reporteId);
 
         databaseReference.child(reporteId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                showLoading(false);
+                mostrarCarga(false);
 
                 if (!dataSnapshot.exists()) {
-                    showError("No se encontró ningún reporte con ese ID");
+                    mostrarError("No se encontró ningún reporte con ese ID");
                     Log.w(TAG, "Reporte no encontrado: " + reporteId);
                     return;
                 }
@@ -96,25 +85,25 @@ public class ConsultarReporteActivity extends AppCompatActivity {
                 try {
                     Reporte reporte = dataSnapshot.getValue(Reporte.class);
                     if (reporte == null) {
-                        showError("Error al interpretar los datos");
+                        mostrarError("Error al interpretar los datos del reporte");
                         Log.e(TAG, "Datos nulos para ID: " + reporteId);
                         return;
                     }
 
                     mostrarDatosReporte(reporte);
-                    Log.d(TAG, "Reporte mostrado: " + reporte.getId());
+                    Log.d(TAG, "Reporte mostrado correctamente: " + reporte.getId());
 
                 } catch (Exception e) {
-                    showError("Error al procesar los datos");
+                    mostrarError("Error al procesar los datos del reporte");
                     Log.e(TAG, "Error al parsear reporte", e);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                showLoading(false);
-                String errorMsg = "Error Firebase: " + databaseError.getMessage();
-                showError(errorMsg);
+                mostrarCarga(false);
+                String errorMsg = "Error de Firebase: " + databaseError.getMessage();
+                mostrarError(errorMsg);
                 Log.e(TAG, errorMsg);
             }
         });
@@ -124,24 +113,80 @@ public class ConsultarReporteActivity extends AppCompatActivity {
     private void mostrarDatosReporte(Reporte reporte) {
         runOnUiThread(() -> {
             try {
+                // texto del reporte
                 StringBuilder sb = new StringBuilder();
-                sb.append("✅ Reporte encontrado\n\n");
-                sb.append("🆔 ID: ").append(reporte.getId()).append("\n\n");
-                sb.append("👤 Nombre: ").append(reporte.getNombre()).append("\n\n");
-                sb.append("📱 Celular: ").append(reporte.getCelular()).append("\n\n");
-                sb.append("✉️ Correo: ").append(reporte.getCorreo()).append("\n\n");
-                sb.append("📍 Dirección: ").append(reporte.getDireccion()).append("\n\n");
-                sb.append("🏘️ Colonia: ").append(reporte.getColonia()).append("\n\n");
-                sb.append("🔧 Tipo: ").append(reporte.getTipo_reporte()).append("\n\n");
-                sb.append("📝 Descripción: ").append(reporte.getDescripcion()).append("\n\n");
-                sb.append("🖼️ Imagen: ").append(reporte.getImagen() != null ? "Adjunta" : "No disponible");
+                sb.append("Reporte encontrado\n\n");
+                sb.append("ID: ").append(reporte.getId()).append("\n\n");
+                sb.append("Nombre: ").append(reporte.getNombre()).append("\n\n");
+                sb.append("Celular: ").append(reporte.getCelular()).append("\n\n");
+                sb.append("Correo: ").append(reporte.getCorreo()).append("\n\n");
+                sb.append("Dirección: ").append(reporte.getDireccion()).append("\n\n");
+                sb.append("Colonia: ").append(reporte.getColonia()).append("\n\n");
+                sb.append("Tipo de Reporte: ").append(reporte.getTipo_reporte()).append("\n\n");
+                sb.append("Descripción: ").append(reporte.getDescripcion());
 
                 tvDatosReporte.setText(sb.toString());
+                tvDatosReporte.setTextColor(getResources().getColor(android.R.color.black));
+
+                //imagen
+                if (reporte.getImagen() != null && !reporte.getImagen().isEmpty()) {
+                    try {
+                        Bitmap bitmap = decodificarImagenBase64(reporte.getImagen());
+                        if (bitmap != null) {
+                            imgReporte.setImageBitmap(bitmap);
+                            imgReporte.setVisibility(View.VISIBLE);
+                        } else {
+                            imgReporte.setVisibility(View.GONE);
+                            Log.w(TAG, "La imagen no pudo ser decodificada");
+                        }
+                    } catch (OutOfMemoryError e) {
+                        imgReporte.setVisibility(View.GONE);
+                        Log.e(TAG, "Memoria insuficiente para cargar la imagen", e);
+                        mostrarToast("Imagen demasiado grande para mostrar");
+                    }
+                } else {
+                    imgReporte.setVisibility(View.GONE);
+                }
+
             } catch (Exception e) {
-                showError("Error al mostrar datos");
-                Log.e(TAG, "Error al mostrar reporte", e);
+                Log.e(TAG, "Error al mostrar datos", e);
+                tvDatosReporte.setText("Error al formatear los datos del reporte");
             }
         });
+    }
+
+    private Bitmap decodificarImagenBase64(String base64String) {
+        try {
+            String base64Image = base64String.contains(",") ?
+                    base64String.split(",")[1] : base64String;
+            byte[] decodedBytes = Base64.decode(base64Image, Base64.DEFAULT);
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length, options);
+
+            int scale = calcularFactorEscalado(options);
+
+            BitmapFactory.Options scaledOptions = new BitmapFactory.Options();
+            scaledOptions.inSampleSize = scale;
+            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length, scaledOptions);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error al decodificar imagen Base64", e);
+            return null;
+        }
+    }
+
+    private int calcularFactorEscalado(BitmapFactory.Options options) {
+        final int REQUIRED_SIZE = 800;
+        int width = options.outWidth;
+        int height = options.outHeight;
+        int scale = 1;
+        while (width / scale / 2 >= REQUIRED_SIZE && height / scale / 2 >= REQUIRED_SIZE) {
+            scale *= 2;
+        }
+
+        return scale;
     }
 
     private void pegarDesdePortapapeles() {
@@ -153,34 +198,41 @@ public class ConsultarReporteActivity extends AppCompatActivity {
                     String text = item.getText().toString().trim();
                     if (!text.isEmpty()) {
                         etReporteId.setText(text);
-                        showToast("ID pegado");
+                        mostrarToast("ID pegado desde portapapeles");
                         return;
                     }
                 }
             }
-            showToast("No hay contenido para pegar");
+            mostrarToast("No hay contenido para pegar");
         } catch (Exception e) {
-            showToast("Error al pegar");
+            mostrarToast("Error al pegar desde portapapeles");
             Log.e(TAG, "Error al pegar", e);
         }
     }
 
-    private void showLoading(boolean loading) {
-        progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
-        tvDatosReporte.setVisibility(loading ? View.INVISIBLE : View.VISIBLE);
+    private void mostrarCarga(boolean mostrar) {
+        progressBar.setVisibility(mostrar ? View.VISIBLE : View.GONE);
+        tvDatosReporte.setVisibility(mostrar ? View.INVISIBLE : View.VISIBLE);
+        imgReporte.setVisibility(View.GONE); // Ocultar imagen durante carga
     }
 
-    private void showError(String message) {
-        tvDatosReporte.setText("❌ " + message);
+    private void mostrarError(String mensaje) {
+        tvDatosReporte.setText("❌ " + mensaje);
+        tvDatosReporte.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+        imgReporte.setVisibility(View.GONE);
     }
 
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    private void mostrarToast(String mensaje) {
+        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Liberar recursos
+        if (imgReporte != null) {
+            imgReporte.setImageBitmap(null);
+        }
         if (databaseReference != null) {
             databaseReference.removeEventListener((ValueEventListener) this);
         }
