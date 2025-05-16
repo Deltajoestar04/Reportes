@@ -52,7 +52,7 @@ public class ContactoActivity extends AppCompatActivity {
 
     private void enviarCorreo() {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:soporte@ciudadanoapp.com")); // contacto correo
+        intent.setData(Uri.parse("msoporte@ciudadanoapp.com")); // contacto correo
         intent.putExtra(Intent.EXTRA_SUBJECT, "Consulta Ciudadana");
         startActivity(intent);
     }
